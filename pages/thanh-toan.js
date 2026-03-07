@@ -97,15 +97,30 @@ export default function ThanhToan() {
     const bank = BANK_CONFIG[selectedBank]
     if (!bank) return
 
-    const deeplink = generateDeeplink({ bankId: selectedBank, accountNo: BANK_ACCOUNT, amount: amtNum, description: desc })
-    if (!deeplink) return
+    //const deeplink = generateDeeplink({ bankId: selectedBank, accountNo: BANK_ACCOUNT, amount: amtNum, description: desc })
+   // if (!deeplink) return
 
     if (isMobile()) {
-      // Try app deeplink first, fallback to web
-      window.location.href = deeplink.appUrl
-      setTimeout(() => {
-        window.open(bank.webUrl, '_blank')
-      }, 2000)
+      
+      // Try app deeplink first, fallback to web      window.location.href = deeplink.appUrl      setTimeout(() => {        window.open(bank.webUrl, '_blank')      }, 2000)
+
+              // TẠO DEEPLINK THEO CHUẨN TÀI LIỆU VIETQR.IO
+        // Tham số: app (id ngân hàng khách chọn), ba (stk@bank của bạn), am (số tiền), tn (nội dung)
+        const deepLink = `https://dl.vietqr.io/pay` + 
+                         `?app=${selectedBank}` + 
+                         `&ba=${BANK_ACCOUNT}@${selectedBank}` + 
+                         `&am=${amtNum}` + 
+                         `&tn=${encodeURIComponent(orderId)}` +  
+                        "&url=https://payos.vn";
+        
+        window.location.href = deepLink;
+
+        // Fallback: Nếu không mở được app sau 2.5 giây, cuộn xuống ảnh QR
+        setTimeout(() => {
+            if (!document.hidden) {
+                document.getElementById("qr-img").scrollIntoView({ behavior: "smooth" });
+            }
+        }, 2500);
     } else {
       window.open(bank.webUrl, '_blank')
     }
