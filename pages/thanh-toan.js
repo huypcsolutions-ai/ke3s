@@ -101,7 +101,7 @@ export default function ThanhToan() {
     const deepLink =
       `https://dl.vietqr.io/pay` +
       `?app=${selectedBank.toLowerCase()}` +
-      `&ba=${BANK_ACCOUNT}@${DEFAULT_BANK}` +
+      `&ba=${BANK_ACCOUNT}@970416` +
       `&am=${amtNum}` +
       `&tn=${encodeURIComponent(orderId)}` +
        "&url=https://payos.vn";
