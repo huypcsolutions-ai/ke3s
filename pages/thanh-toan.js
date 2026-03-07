@@ -106,12 +106,12 @@ export default function ThanhToan() {
 
               // TẠO DEEPLINK THEO CHUẨN TÀI LIỆU VIETQR.IO
         // Tham số: app (id ngân hàng khách chọn), ba (stk@bank của bạn), am (số tiền), tn (nội dung)
-        const deepLink = `https://dl.vietqr.io/pay` + 
-                         `?app=${selectedBank}` + 
-                         `&ba=${BANK_ACCOUNT}@${selectedBank}` + 
-                         `&am=${amtNum}` + 
-                         `&tn=${encodeURIComponent(orderId)}` +  
-                        "&url=https://payos.vn";
+const deepLink =
+`https://dl.vietqr.io/pay` +
+`?app=${bank.id.toLowerCase()}` +
+`&ba=${BANK_ACCOUNT}@${BANK_ID}` +
+`&am=${amtNum}` +
+`&tn=${encodeURIComponent(orderId)}`+ "&url=https://payos.vn";
         
         window.location.href = deepLink;
 
