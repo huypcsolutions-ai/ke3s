@@ -4,9 +4,9 @@ import Layout from '../components/Layout'
 import { supabase } from '../lib/supabase'
 import { BANK_LIST, BANK_CONFIG, generateVietQR, generateDeeplink } from '../lib/bankConfig'
 
-const BANK_ACCOUNT = process.env.NEXT_PUBLIC_BANK_ACCOUNT || '0987654321'
-const BANK_ACCOUNT_NAME = process.env.NEXT_PUBLIC_BANK_ACCOUNT_NAME || 'NGUYEN VAN A'
-const DEFAULT_BANK = process.env.NEXT_PUBLIC_BANK_ID || 'MB'
+const BANK_ACCOUNT = process.env.NEXT_PUBLIC_BANK_ACCOUNT || '134150399'
+const BANK_ACCOUNT_NAME = process.env.NEXT_PUBLIC_BANK_ACCOUNT_NAME || 'HOANG HUY HAI'
+const DEFAULT_BANK = process.env.NEXT_PUBLIC_BANK_ID || 'acb'
 const TIMEOUT = 15 * 60 // 15 phút
 
 function isMobile() {
