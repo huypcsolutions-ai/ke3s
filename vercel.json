@@ -7,16 +7,16 @@
   "framework": "nextjs",
   "regions": ["sin1"],
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://btakxbgrshtslepjgxqc.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0YWt4Ymdyc2h0c2xlcGpneHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzA0NjIsImV4cCI6MjA4ODEwNjQ2Mn0.DosO2T_Vqqn_DBSIkEPXmU1OifhLsYR8_rhBouEd22M",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0YWt4Ymdyc2h0c2xlcGpneHFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjUzMDQ2MiwiZXhwIjoyMDg4MTA2NDYyfQ.-zYiMdQTjd7lVJBI_VYh4IypAwz7BFzsetO1pDPcHcw",
     "SMTP_HOST": "@smtp_host",
     "SMTP_PORT": "@smtp_port",
-    "SMTP_USER": "@smtp_user",
+    "SMTP_USER": "huypcsolutions@gmail.com",
     "SMTP_PASS": "@smtp_pass",
     "SMTP_FROM": "@smtp_from",
-    "NEXT_PUBLIC_BANK_ID": "@bank_id",
-    "NEXT_PUBLIC_BANK_ACCOUNT": "@bank_account",
-    "NEXT_PUBLIC_BANK_ACCOUNT_NAME": "@bank_account_name"
+    "NEXT_PUBLIC_BANK_ID": "acb",
+    "NEXT_PUBLIC_BANK_ACCOUNT": "134150399",
+    "NEXT_PUBLIC_BANK_ACCOUNT_NAME": "hai"
   }
 }
