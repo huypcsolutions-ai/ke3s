@@ -92,39 +92,36 @@ export default function ThanhToan() {
   }
 
   function handleOpenApp() {
-    const amtNum = parseInt(amount) || 0
-    const desc = `M365Keys ${orderId}`
-    const bank = BANK_CONFIG[selectedBank]
-    if (!bank) return
+  const amtNum = parseInt(amount) || 0
+  const bank = BANK_CONFIG[selectedBank]
+  if (!bank) return
 
-    //const deeplink = generateDeeplink({ bankId: selectedBank, accountNo: BANK_ACCOUNT, amount: amtNum, description: desc })
-   // if (!deeplink) return
+  if (isMobile()) {
 
-    if (isMobile()) {
-      
-      // Try app deeplink first, fallback to web      window.location.href = deeplink.appUrl      setTimeout(() => {        window.open(bank.webUrl, '_blank')      }, 2000)
+    const deepLink =
+      `https://dl.vietqr.io/pay` +
+      `?app=${selectedBank.toLowerCase()}` +
+      `&ba=${BANK_ACCOUNT}@${DEFAULT_BANK}` +
+      `&am=${amtNum}` +
+      `&tn=${encodeURIComponent(orderId)}` +
+      `&mode=app`
 
-              // TẠO DEEPLINK THEO CHUẨN TÀI LIỆU VIETQR.IO
-        // Tham số: app (id ngân hàng khách chọn), ba (stk@bank của bạn), am (số tiền), tn (nội dung)
-const deepLink =
-`https://dl.vietqr.io/pay` +
-`?app=${bank.id.toLowerCase()}` +
-`&ba=${BANK_ACCOUNT}@${BANK_ID}` +
-`&am=${amtNum}` +
-`&tn=${encodeURIComponent(orderId)}`+ "&url=https://payos.vn";
-        
-        window.location.href = deepLink;
+    window.location.href = deepLink
 
-        // Fallback: Nếu không mở được app sau 2.5 giây, cuộn xuống ảnh QR
-        setTimeout(() => {
-            if (!document.hidden) {
-                document.getElementById("qr-img").scrollIntoView({ behavior: "smooth" });
-            }
-        }, 2500);
-    } else {
-      window.open(bank.webUrl, '_blank')
+    // fallback nếu không mở được app
+    setTimeout(() => {
+      if (!document.hidden) {
+        document.getElementById("qr-img")
+          ?.scrollIntoView({ behavior: "smooth" })
+      }
+    }, 2500)
+
+  } else {
+    if (bank.webUrl) {
+      window.open(bank.webUrl, "_blank")
     }
   }
+}
 
   const formatTime = (s) => {
     const m = Math.floor(s / 60).toString().padStart(2, '0')
