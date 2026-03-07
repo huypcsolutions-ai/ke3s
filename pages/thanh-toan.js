@@ -104,9 +104,9 @@ export default function ThanhToan() {
       `&ba=${BANK_ACCOUNT}@${DEFAULT_BANK}` +
       `&am=${amtNum}` +
       `&tn=${encodeURIComponent(orderId)}` +
-      `&mode=app`
+       "&url=https://payos.vn";
 
-    window.location.href = deepLink
+    window.location.href = deepLink;
 
     // fallback nếu không mở được app
     setTimeout(() => {
