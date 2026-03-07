@@ -4,9 +4,9 @@ import Layout from '../components/Layout'
 import { supabase } from '../lib/supabase'
 import { BANK_LIST, BANK_CONFIG, generateVietQR, generateDeeplink } from '../lib/bankConfig'
 
-const BANK_ACCOUNT = process.env.NEXT_PUBLIC_BANK_ACCOUNT || '134150399'
-const BANK_ACCOUNT_NAME = process.env.NEXT_PUBLIC_BANK_ACCOUNT_NAME || 'HOANG HUY HAI'
-const DEFAULT_BANK = process.env.NEXT_PUBLIC_BANK_ID || 'acb'
+const BANK_ACCOUNT = process.env.NEXT_PUBLIC_BANK_ACCOUNT || '0987654321'
+const BANK_ACCOUNT_NAME = process.env.NEXT_PUBLIC_BANK_ACCOUNT_NAME || 'NGUYEN VAN A'
+const DEFAULT_BANK = process.env.NEXT_PUBLIC_BANK_ID || 'MB'
 const TIMEOUT = 15 * 60 // 15 phút
 
 function isMobile() {
@@ -92,36 +92,24 @@ export default function ThanhToan() {
   }
 
   function handleOpenApp() {
-  const amtNum = parseInt(amount) || 0
-  const bank = BANK_CONFIG[selectedBank]
-  if (!bank) return
+    const amtNum = parseInt(amount) || 0
+    const desc = `M365Keys ${orderId}`
+    const bank = BANK_CONFIG[selectedBank]
+    if (!bank) return
 
-  if (isMobile()) {
+    const deeplink = generateDeeplink({ bankId: selectedBank, accountNo: BANK_ACCOUNT, amount: amtNum, description: desc })
+    if (!deeplink) return
 
-    const deepLink =
-      `https://dl.vietqr.io/pay` +
-      `?app=${selectedBank.toLowerCase()}` +
-      `&ba=${BANK_ACCOUNT}@970416` +
-      `&am=${amtNum}` +
-      `&tn=${encodeURIComponent(orderId)}` +
-       "&url=https://payos.vn";
-
-    window.location.href = deepLink;
-
-    // fallback nếu không mở được app
-    setTimeout(() => {
-      if (!document.hidden) {
-        document.getElementById("qr-img")
-          ?.scrollIntoView({ behavior: "smooth" })
-      }
-    }, 2500)
-
-  } else {
-    if (bank.webUrl) {
-      window.open(bank.webUrl, "_blank")
+    if (isMobile()) {
+      // Try app deeplink first, fallback to web
+      window.location.href = deeplink.appUrl
+      setTimeout(() => {
+        window.open(bank.webUrl, '_blank')
+      }, 2000)
+    } else {
+      window.open(bank.webUrl, '_blank')
     }
   }
-}
 
   const formatTime = (s) => {
     const m = Math.floor(s / 60).toString().padStart(2, '0')
