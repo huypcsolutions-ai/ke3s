@@ -6,6 +6,13 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["sin1"],
+  "crons": [
+    {
+      "path": "/api/cron-sync-stock",
+      "schedule": "0 * * * *"
+    }
+  ],
+  
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://btakxbgrshtslepjgxqc.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0YWt4Ymdyc2h0c2xlcGpneHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MzA0NjIsImV4cCI6MjA4ODEwNjQ2Mn0.DosO2T_Vqqn_DBSIkEPXmU1OifhLsYR8_rhBouEd22M",
@@ -17,6 +24,16 @@
     "SMTP_FROM": "FastKey Store <huypcsolutions@gmail.com>",
     "NEXT_PUBLIC_BANK_ID": "acb",
     "NEXT_PUBLIC_BANK_ACCOUNT": "134150399",
-    "NEXT_PUBLIC_BANK_ACCOUNT_NAME": "hai"
+    "NEXT_PUBLIC_BANK_ACCOUNT_NAME": "hai",
+    "ADMIN_SECRET":                     "admin_secret",
+    "CRON_SECRET":                      "cron_secret",
+    "ODOO_URL":                         "45.117.156.24",
+    "ODOO_DB":                          "DB_HCH_PRO_V2_2023072023",
+    "ODOO_USER":                        "username",
+    "ODOO_API_KEY":                     "passs"
+
+    
+
+    
   }
 }
