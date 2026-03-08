@@ -1,57 +1,116 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Layout from '../components/Layout'
 import { supabase } from '../lib/supabase'
 
+// ─── Activity logger ───────────────────────────────────────────────────────
+// Ghi log hoạt động vào table logalls
+// uid khách hàng: lấy từ localStorage (tạo mới nếu chưa có)
+function getUid() {
+  if (typeof window === 'undefined') return 'ssr'
+  let uid = localStorage.getItem('m365_uid')
+  if (!uid) {
+    uid = 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
+    localStorage.setItem('m365_uid', uid)
+  }
+  return uid
+}
+
+async function logActivity(action, meta = {}) {
+  try {
+    await supabase.from('logalls').insert({
+      uid:     getUid(),
+      action,
+      meta,
+      created_at: new Date().toISOString(),
+    })
+  } catch (e) {
+    // log không ảnh hưởng UX
+  }
+}
+
+// ─── Product Card ─────────────────────────────────────────────────────────
+
 function ProductCard({ product }) {
   const router = useRouter()
-  const inStock = product.stock > 0
+
+  // Dùng forecasted = stock + stock_supplier để hiện còn/hết hàng
+  const forecasted = product.forecasted ?? (product.stock + (product.stock_supplier || 0))
+  const inStock = forecasted > 0
+
+  // Hiển thị số tồn kho chi tiết (nội bộ + NCC)
+  const stockLocal    = product.stock || 0
+  const stockSupplier = product.stock_supplier || 0
+
+  function handleBuy() {
+    if (!inStock) return
+    logActivity('buy_click', { product_code: product.odoo_product_code || product.id, product_name: product.name })
+    router.push(`/dat-hang?product=${product.id}`)
+  }
 
   return (
     <div className={`product-card${!inStock ? ' out-of-stock' : ''}`}>
       <div className={`product-badge${!inStock ? ' badge-out' : ''}`}>
         {inStock ? '✓ Còn hàng' : '✗ Hết hàng'}
       </div>
-      
+
       <div className="product-img">
         {product.image_url ? (
           <img
             src={product.image_url}
             alt={product.name}
-            onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex' }}
+            onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
           />
         ) : null}
         <div className="product-img-fallback" style={{ display: product.image_url ? 'none' : 'flex' }}>
           💼
         </div>
       </div>
-      
+
       <div className="product-body">
         <div className="product-name">{product.name}</div>
         <div className="product-desc">{product.description}</div>
-        
+
         <div className="product-price">
           {new Intl.NumberFormat('vi-VN').format(product.price)}đ
           <span> / key</span>
         </div>
-        
+
         <div className="product-meta">
           <span>
-            <span className="stars">★★★★★</span> 4.9
+            <span className="stars">★★★★★</span> 4.7
           </span>
           <span>Đã bán: {(product.sold_count || 0).toLocaleString()}</span>
         </div>
-        
+
+        {/* Hiển thị tồn kho dự báo nhỏ dưới giá */}
+        {inStock && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            marginBottom: 12, fontSize: 11.5, color: 'var(--gray-500)'
+          }}>
+            <span style={{ color: 'var(--teal)', fontWeight: 600 }}>
+              ● {forecasted} key sẵn sàng
+            </span>
+            {stockSupplier > 0 && (
+              <span title={`Nội bộ: ${stockLocal} | Nhà cung cấp: ${stockSupplier}`}
+                style={{ cursor: 'help', opacity: 0.7 }}>
+                ({stockLocal} + {stockSupplier} NCC)
+              </span>
+            )}
+          </div>
+        )}
+
         <button
           className="btn btn-primary"
           disabled={!inStock}
-          onClick={() => inStock && router.push(`/dat-hang?product=${product.id}`)}
+          onClick={handleBuy}
         >
           {inStock ? '🛒 Mua ngay' : 'Tạm hết hàng'}
         </button>
-        
+
         <div style={{ fontSize: 11.5, color: 'var(--gray-500)', textAlign: 'center', marginTop: 8 }}>
-          Đã bán: {(product.sold_count || 0).toLocaleString()} &nbsp;|&nbsp; Đánh giá: ⭐ 4.9
+          Đã bán: {(product.sold_count || 0).toLocaleString()} &nbsp;|&nbsp; Đánh giá: ⭐ 4.7
         </div>
       </div>
     </div>
@@ -73,17 +132,26 @@ function ProductSkeleton() {
   )
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────
+
 export default function Home() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const logged = useRef(false)
 
   useEffect(() => {
+    // Log page view (1 lần khi mount)
+    if (!logged.current) {
+      logged.current = true
+      logActivity('view', { page: 'home' })
+    }
+
     async function load() {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('id, name, price, description, image_url, stock, stock_supplier, forecasted, sold_count, odoo_product_code, stock_supplier_synced_at')
         .order('created_at', { ascending: true })
-      
+
       if (!error) setProducts(data || [])
       setLoading(false)
     }
@@ -113,7 +181,7 @@ export default function Home() {
                 <div className="stat-label">Khách hàng</div>
               </div>
               <div className="stat">
-                <div className="stat-num">4.9★</div>
+                <div className="stat-num">4.7★</div>
                 <div className="stat-label">Đánh giá</div>
               </div>
               <div className="stat">
@@ -145,12 +213,22 @@ export default function Home() {
       {/* PRODUCTS */}
       <section className="section">
         <div className="container">
-          <div className="section-title">🛍️ Sản phẩm đang có</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+            <div className="section-title">🛍️ Sản phẩm đang có</div>
+            {!loading && products.some(p => p.stock_supplier_synced_at) && (
+              <span style={{ fontSize: 11, color: 'var(--gray-500)', fontStyle: 'italic' }}>
+                🔄 Tồn kho NCC cập nhật lúc{' '}
+                {new Date(
+                  Math.max(...products.filter(p => p.stock_supplier_synced_at).map(p => new Date(p.stock_supplier_synced_at)))
+                ).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            )}
+          </div>
           <div className="section-sub">Chọn gói phù hợp với nhu cầu của bạn</div>
-          
+
           <div className="products-grid">
             {loading
-              ? [1,2,3,4].map(i => <ProductSkeleton key={i} />)
+              ? [1, 2, 3, 4].map(i => <ProductSkeleton key={i} />)
               : products.map(p => <ProductCard key={p.id} product={p} />)
             }
             {!loading && products.length === 0 && (
