@@ -175,10 +175,42 @@ export default function AdminPage() {
     )
   }
 
+  const [syncLogs, setSyncLogs]               = useState([])
+  const [syncLogsLoading, setSyncLogsLoading] = useState(false)
+  const [syncing, setSyncing]                 = useState(false)
+
+  async function loadSyncLogs() {
+    setSyncLogsLoading(true)
+    try {
+      const data = await apiFetch('/api/stock-sync-logs')
+      setSyncLogs(data.logs || [])
+    } catch { showToast('Không tải được sync logs', 'error') }
+    setSyncLogsLoading(false)
+  }
+
+  async function triggerManualSync() {
+    setSyncing(true)
+    try {
+      const data = await apiFetch('/api/cron-sync-stock', { method: 'POST' })
+      if (data.success) {
+        showToast('Sync xong: ' + data.synced + ' sản phẩm cập nhật', 'success')
+        loadSyncLogs()
+      } else {
+        showToast('Lỗi sync: ' + data.error, 'error')
+      }
+    } catch (e) { showToast('Lỗi kết nối', 'error') }
+    setSyncing(false)
+  }
+
+  useEffect(() => {
+    if (authed && activeTab === 'sync') loadSyncLogs()
+  }, [authed, activeTab])
+
   const tabs = [
-    { id:'config', label:'⚙️ Cấu hình', icon:'⚙️' },
-    { id:'odoo',   label:'🔗 Odoo',     icon:'🔗' },
-    { id:'logs',   label:'📋 Logs',     icon:'📋' },
+    { id:'config', label:'⚙️ Cấu hình' },
+    { id:'odoo',   label:'🔗 Odoo' },
+    { id:'sync',   label:'🔄 Sync Stock' },
+    { id:'logs',   label:'📋 Autoload' },
   ]
 
   return (
@@ -425,45 +457,113 @@ export default function AdminPage() {
             )}
           </div>
         )}
+
+        {/* Tab: Sync Stock NCC */}
+        {activeTab === 'sync' && (
+          <div style={{display:'grid',gap:20}}>
+            {/* Cron info */}
+            <div style={{background:'white',borderRadius:14,padding:24,boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:20,flexWrap:'wrap'}}>
+                <div>
+                  <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:4}}>🔄 Sync Tồn Kho Nhà Cung Cấp</div>
+                  <p style={{fontSize:13,color:'#6b7280',lineHeight:1.7,maxWidth:520}}>
+                    Cron job chạy tự động mỗi <strong>1 giờ</strong> (lịch: <code style={{background:'#f3f4f6',padding:'1px 6px',borderRadius:4}}>0 * * * *</code>)
+                    để cập nhật cột <code style={{background:'#f3f4f6',padding:'1px 6px',borderRadius:4}}>stock_supplier</code> từ Odoo.
+                    Cột <code style={{background:'#f3f4f6',padding:'1px 6px',borderRadius:4}}>forecasted = stock + stock_supplier</code> tự tính.
+                  </p>
+                </div>
+                <button
+                  onClick={triggerManualSync}
+                  disabled={syncing}
+                  style={{padding:'12px 22px',background: syncing?'#9ca3af':'#0078d4',color:'white',border:'none',borderRadius:10,cursor: syncing?'not-allowed':'pointer',fontFamily:'Be Vietnam Pro',fontWeight:700,fontSize:14,whiteSpace:'nowrap',flexShrink:0}}
+                >
+                  {syncing ? '⏳ Đang sync...' : '▶ Chạy ngay'}
+                </button>
+              </div>
+
+              <div style={{marginTop:20,display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+                {[
+                  {icon:'🔍', label:'Nguồn dữ liệu', val:'Odoo stock.quant'},
+                  {icon:'📍', label:'Location filter', val:"ILIKE '%sale%' OR usage=internal"},
+                  {icon:'⏰', label:'Tần suất', val:'Mỗi 1 giờ (Vercel Cron)'},
+                ].map(item => (
+                  <div key={item.label} style={{background:'#f8f9fa',borderRadius:10,padding:'14px 16px'}}>
+                    <div style={{fontSize:20,marginBottom:6}}>{item.icon}</div>
+                    <div style={{fontSize:11,color:'#9ca3af',marginBottom:3}}>{item.label}</div>
+                    <div style={{fontSize:12.5,fontWeight:600,color:'#374151',fontFamily:'monospace'}}>{item.val}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sync Logs */}
+            <div style={{background:'white',borderRadius:14,padding:24,boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+                <div>
+                  <div style={{fontFamily:'Syne',fontWeight:700,fontSize:15}}>📊 Lịch sử sync</div>
+                  <p style={{fontSize:12,color:'#6b7280',marginTop:2}}>50 lần sync gần nhất</p>
+                </div>
+                <button onClick={loadSyncLogs} style={{padding:'7px 14px',background:'#f3f4f6',border:'none',borderRadius:8,cursor:'pointer',fontFamily:'Be Vietnam Pro',fontWeight:600,fontSize:12}}>
+                  🔄 Refresh
+                </button>
+              </div>
+
+              {syncLogsLoading ? (
+                <div style={{textAlign:'center',padding:'30px',color:'#6b7280'}}>⏳ Đang tải...</div>
+              ) : syncLogs.length === 0 ? (
+                <div style={{textAlign:'center',padding:'30px',color:'#9ca3af'}}>
+                  <div style={{fontSize:32,marginBottom:8}}>📭</div>
+                  <p>Chưa có lịch sử sync</p>
+                </div>
+              ) : (
+                <div style={{overflowX:'auto'}}>
+                  <table style={{width:'100%',borderCollapse:'collapse',fontSize:12.5}}>
+                    <thead>
+                      <tr style={{borderBottom:'2px solid #e5e7eb'}}>
+                        {['Bắt đầu','Kết thúc','Trạng thái','SP sync','Chi tiết'].map(h => (
+                          <th key={h} style={{padding:'9px 12px',textAlign:'left',fontWeight:600,color:'#374151',whiteSpace:'nowrap'}}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {syncLogs.map((log,i) => (
+                        <tr key={i} style={{borderBottom:'1px solid #f3f4f6',background:i%2===0?'white':'#fafafa'}}>
+                          <td style={{padding:'9px 12px',whiteSpace:'nowrap',color:'#6b7280'}}>{log.started_at ? new Date(log.started_at).toLocaleString('vi-VN') : '—'}</td>
+                          <td style={{padding:'9px 12px',whiteSpace:'nowrap',color:'#6b7280'}}>{log.finished_at ? new Date(log.finished_at).toLocaleString('vi-VN') : '—'}</td>
+                          <td style={{padding:'9px 12px'}}>
+                            <span style={{
+                              padding:'2px 9px',borderRadius:100,fontSize:11,fontWeight:700,
+                              background: log.status==='success'?'#dcfce7':log.status==='partial'?'#fef3c7':'#fee2e2',
+                              color: log.status==='success'?'#16a34a':log.status==='partial'?'#92400e':'#dc2626'
+                            }}>{log.status==='success'?'✅ OK':log.status==='partial'?'⚠️ Partial':log.status==='running'?'⏳ Running':'❌ Error'}</span>
+                          </td>
+                          <td style={{padding:'9px 12px',textAlign:'center'}}>
+                            <span style={{background:'#dbeafe',color:'#1d4ed8',padding:'2px 8px',borderRadius:100,fontWeight:700}}>{log.products_synced || 0}</span>
+                          </td>
+                          <td style={{padding:'9px 12px',maxWidth:260,fontSize:11,color:'#6b7280'}}>
+                            {log.details?.synced ? (
+                              <div>
+                                {Object.entries(log.details.synced).map(([k,v]) => (
+                                  <span key={k} style={{display:'inline-block',marginRight:6,marginBottom:2,background:'#f0fdf4',padding:'1px 6px',borderRadius:4,color:'#16a34a'}}>{k}: {v}</span>
+                                ))}
+                                {log.details.errors && Object.keys(log.details.errors).length > 0 && (
+                                  <div style={{marginTop:3,color:'#ef4444'}}>{Object.keys(log.details.errors).length} lỗi</div>
+                                )}
+                              </div>
+                            ) : log.error_message ? (
+                              <span style={{color:'#ef4444'}}>{log.error_message}</span>
+                            ) : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
-  )
-}
-
-function SettingRow({ settingKey, meta, value, saving, onChange, onSave }) {
-  const [local, setLocal] = useState(value)
-  const [show, setShow] = useState(false)
-  const isDirty = local !== value
-
-  return (
-    <div style={{marginBottom:20}}>
-      <label style={{fontSize:13,fontWeight:600,display:'block',marginBottom:4}}>{meta.label}</label>
-      {meta.desc && <p style={{fontSize:12,color:'#9ca3af',marginBottom:6}}>{meta.desc}</p>}
-      <div style={{display:'flex',gap:10}}>
-        <input
-          type={meta.type==='password' && !show ? 'password' : 'text'}
-          value={local}
-          onChange={e=>{setLocal(e.target.value);onChange(e.target.value)}}
-          placeholder={meta.placeholder}
-          style={{flex:1,padding:'10px 14px',border:`1.5px solid ${isDirty?'#f59e0b':'#e5e7eb'}`,borderRadius:8,fontSize:14,outline:'none',fontFamily:'Be Vietnam Pro'}}
-        />
-        {meta.type==='password' && (
-          <button onClick={()=>setShow(s=>!s)} style={{padding:'10px 14px',background:'#f3f4f6',border:'none',borderRadius:8,cursor:'pointer',fontSize:14}}>
-            {show?'🙈':'👁️'}
-          </button>
-        )}
-        <button
-          onClick={()=>onSave(local)}
-          disabled={saving || !isDirty}
-          style={{
-            padding:'10px 18px',background: isDirty?'#0078d4':'#e5e7eb',color: isDirty?'white':'#9ca3af',
-            border:'none',borderRadius:8,cursor: isDirty?'pointer':'not-allowed',
-            fontFamily:'Be Vietnam Pro',fontWeight:600,fontSize:13,whiteSpace:'nowrap'
-          }}
-        >
-          {saving ? '⏳' : '💾 Lưu'}
-        </button>
-      </div>
-    </div>
   )
 }
