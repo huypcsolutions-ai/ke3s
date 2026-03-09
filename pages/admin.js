@@ -359,7 +359,7 @@ export default function AdminPage() {
             <div style={{background:'white',borderRadius:14,padding:24,boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
               <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:4}}>🗂️ Map sản phẩm với Nhà cung cấp</div>
               <p style={{fontSize:13,color:'#6b7280',marginBottom:16,lineHeight:1.6}}>
-                Vào <strong>Supabase → Table Editor → products</strong>, cập nhật cột <code style={{background:'#f3f4f6',padding:'1px 6px',borderRadius:4}}>o_product_code</code> = Internal Reference của sản phẩm trong Odoo nhà cung cấp.
+                Vào <strong>Supabase → Table Editor → products</strong>, cập nhật cột <code style={{background:'#f3f4f6',padding:'1px 6px',borderRadius:4}}>o_product_code</code> = Internal Reference của sản phẩm nhà cung cấp.
               </p>
               <div style={{background:'#f8f9fa',borderRadius:8,padding:'12px 16px',fontSize:12,fontFamily:'monospace',color:'#374151',lineHeight:2}}>
                 <div>M365 Personal 1 năm → <strong>M365-PERSONAL-1Y</strong></div>
