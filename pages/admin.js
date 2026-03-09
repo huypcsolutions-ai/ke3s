@@ -72,7 +72,7 @@ export default function AdminPage() {
   async function apiFetch(url, opts={}) {
     const res = await fetch(url, {
       ...opts,
-      headers: { 'Content-Type':'application/json', 'x-admin-secret': secret, ...(opts.headers||{}) }
+      headers: { 'Content-Type':'application/json', 'x-admin-secret': secret.trim(), ...(opts.headers||{}) }
     })
     return res.json()
   }
@@ -81,10 +81,26 @@ export default function AdminPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      const data = await apiFetch('/api/admin-settings')
-      if (data.error) { showToast('Sai mật khẩu admin', 'error') }
-      else { setSettings(data); setAuthed(true) }
-    } catch { showToast('Lỗi kết nối', 'error') }
+      const res = await fetch('/api/admin-settings', {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-secret': secret.trim()   // trim() phòng copy-paste thừa space
+        }
+      })
+      const data = await res.json()
+      if (res.status === 401) {
+        showToast('Sai mật khẩu — kiểm tra lại ADMIN_SECRET trong Vercel env vars', 'error')
+      } else if (res.status === 500) {
+        showToast('ADMIN_SECRET chưa được set trong Vercel env vars', 'error')
+      } else if (res.ok) {
+        setSettings(data)
+        setAuthed(true)
+      } else {
+        showToast('Lỗi: ' + (data.error || res.status), 'error')
+      }
+    } catch (err) {
+      showToast('Lỗi kết nối tới server: ' + err.message, 'error')
+    }
     setLoading(false)
   }
 
@@ -168,8 +184,35 @@ export default function AdminPage() {
             </button>
           </form>
           <p style={{textAlign:'center',marginTop:16,fontSize:12,color:'#9ca3af'}}>
-            Đặt ADMIN_SECRET trong Vercel environment variables
+            Đặt <code style={{background:'#f3f4f6',padding:'1px 5px',borderRadius:4}}>ADMIN_SECRET</code> trong Vercel environment variables
           </p>
+
+          {/* Debug helper */}
+          <details style={{marginTop:16,borderTop:'1px solid #f3f4f6',paddingTop:14}}>
+            <summary style={{fontSize:11.5,color:'#9ca3af',cursor:'pointer',userSelect:'none'}}>🔧 Vẫn không vào được? Bấm để debug</summary>
+            <div style={{marginTop:10,fontSize:12,color:'#6b7280',lineHeight:1.8}}>
+              <p style={{marginBottom:8}}>Kiểm tra các bước sau:</p>
+              <ol style={{paddingLeft:18,lineHeight:2}}>
+                <li>Vào <strong>Vercel Dashboard → Settings → Environment Variables</strong></li>
+                <li>Tìm biến <code style={{background:'#f3f4f6',padding:'1px 4px',borderRadius:3}}>ADMIN_SECRET</code> — copy giá trị ra</li>
+                <li>Xoá khoảng trắng 2 đầu (nếu có) rồi paste vào ô nhập bên trên</li>
+                <li>Sau khi sửa env var trên Vercel, phải <strong>Redeploy</strong> để có hiệu lực</li>
+              </ol>
+              <button
+                onClick={async () => {
+                  try {
+                    const r = await fetch('/api/admin-settings', {
+                      headers: { 'x-admin-secret': secret.trim() }
+                    })
+                    alert('HTTP Status: ' + r.status + '\n' + (r.status===401 ? '❌ Sai secret' : r.status===500 ? '⚠️ ADMIN_SECRET chưa set trong Vercel' : '✅ OK — thử đăng nhập lại'))
+                  } catch(e) { alert('Lỗi fetch: ' + e.message) }
+                }}
+                style={{marginTop:10,padding:'7px 14px',background:'#f3f4f6',border:'1px solid #e5e7eb',borderRadius:7,cursor:'pointer',fontSize:12,fontWeight:600,width:'100%'}}
+              >
+                🧪 Test kết nối ngay
+              </button>
+            </div>
+          </details>
         </div>
       </>
     )
