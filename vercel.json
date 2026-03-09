@@ -5,11 +5,5 @@
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["sin1"],
-  "crons": [
-    {
-      "path": "/api/cron-sync-stock",
-      "schedule": "0 * * * *"
-    }
-  ],
-  }
+  "regions": ["sin1"]
+}
