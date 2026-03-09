@@ -2,15 +2,19 @@ import { getAllSettings, setSetting } from '../../lib/settings'
 import { getServiceClient } from '../../lib/supabase'
 
 async function logActivity(action, meta = {}) {
-  try {
-    const supabase = getServiceClient()
-    await supabase.from('logalls').insert({
-      uid:        'admin',
-      action,
-      meta,
-      created_at: new Date().toISOString(),
-    })
-  } catch (e) { /* non-blocking */ }
+  const supabase = getServiceClient()
+  const { error } = await supabase.from('logalls').insert({
+    uid:        'admin',
+    action,
+    meta,
+    created_at: new Date().toISOString(),
+  })
+  // In lỗi ra Vercel Function Logs để debug
+  if (error) {
+    console.error('[logalls] INSERT failed:', JSON.stringify(error))
+  } else {
+    console.log('[logalls] OK:', action)
+  }
 }
 
 export default async function handler(req, res) {
@@ -24,12 +28,10 @@ export default async function handler(req, res) {
   }
 
   if (provided !== ADMIN_SECRET) {
-    console.warn('[Admin] Auth fail — provided length:', provided.length, '| expected length:', ADMIN_SECRET.length)
     await logActivity('admin_login', { result: 'fail', ip, hint: `len=${provided.length}` })
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
-  // Chỉ log login thành công khi GET (lần đầu đăng nhập)
   if (req.method === 'GET') {
     await logActivity('admin_login', { result: 'ok', ip })
     try {
