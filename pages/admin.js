@@ -62,7 +62,10 @@ export default function AdminPage() {
   const [testLoading, setTestLoading] = useState(false)
   const [logs, setLogs]         = useState([])
   const [logsLoading, setLogsLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState('config')
+  const [activeTab, setActiveTab]             = useState('config')
+  const [syncLogs, setSyncLogs]               = useState([])
+  const [syncLogsLoading, setSyncLogsLoading] = useState(false)
+  const [syncing, setSyncing]                 = useState(false)
 
   function showToast(msg, type='info') {
     setToast({ msg, type })
@@ -144,6 +147,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (authed && activeTab === 'logs') loadLogs()
+    if (authed && activeTab === 'sync') loadSyncLogs()
   }, [authed, activeTab])
 
   const autoloadOn = settings.autoload_enabled === 'true'
@@ -218,10 +222,6 @@ export default function AdminPage() {
     )
   }
 
-  const [syncLogs, setSyncLogs]               = useState([])
-  const [syncLogsLoading, setSyncLogsLoading] = useState(false)
-  const [syncing, setSyncing]                 = useState(false)
-
   async function loadSyncLogs() {
     setSyncLogsLoading(true)
     try {
@@ -245,9 +245,6 @@ export default function AdminPage() {
     setSyncing(false)
   }
 
-  useEffect(() => {
-    if (authed && activeTab === 'sync') loadSyncLogs()
-  }, [authed, activeTab])
 
   const tabs = [
     { id:'config', label:'⚙️ Cấu hình' },
