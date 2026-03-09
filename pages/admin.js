@@ -357,7 +357,7 @@ export default function AdminPage() {
 
             {/* odoo_product_code guide */}
             <div style={{background:'white',borderRadius:14,padding:24,boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
-              <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:4}}>🗂️ Map sản phẩm với Odoo</div>
+              <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:4}}>🗂️ Map sản phẩm với Nhà cung cấp</div>
               <p style={{fontSize:13,color:'#6b7280',marginBottom:16,lineHeight:1.6}}>
                 Vào <strong>Supabase → Table Editor → products</strong>, cập nhật cột <code style={{background:'#f3f4f6',padding:'1px 6px',borderRadius:4}}>odoo_product_code</code> = Internal Reference của sản phẩm trong Odoo nhà cung cấp.
               </p>
