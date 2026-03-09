@@ -1,37 +1,43 @@
 import { getAllSettings, setSetting } from '../../lib/settings'
+import { getServiceClient } from '../../lib/supabase'
+
+async function logActivity(action, meta = {}) {
+  try {
+    const supabase = getServiceClient()
+    await supabase.from('logalls').insert({
+      uid:        'admin',
+      action,
+      meta,
+      created_at: new Date().toISOString(),
+    })
+  } catch (e) { /* non-blocking */ }
+}
 
 export default async function handler(req, res) {
-  // Lấy secret từ env — trim() để tránh khoảng trắng thừa
   const ADMIN_SECRET = (process.env.ADMIN_SECRET || '').trim()
+  const provided     = (req.headers['x-admin-secret'] || req.query.secret || '').trim()
+  const ip           = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown'
 
-  // Lấy secret từ header — trim() phòng copy-paste thừa space
-  const provided = (
-    req.headers['x-admin-secret'] ||
-    req.query.secret ||
-    ''
-  ).trim()
-
-  // So sánh
   if (!ADMIN_SECRET) {
-    // ADMIN_SECRET chưa được set trong env
+    await logActivity('admin_login', { result: 'error', reason: 'ADMIN_SECRET_NOT_SET', ip })
     return res.status(500).json({ error: 'ADMIN_SECRET chưa được cấu hình trong Vercel env vars' })
   }
 
   if (provided !== ADMIN_SECRET) {
-    // Log để debug (chỉ hiện ở server log Vercel, không lộ ra client)
     console.warn('[Admin] Auth fail — provided length:', provided.length, '| expected length:', ADMIN_SECRET.length)
+    await logActivity('admin_login', { result: 'fail', ip, hint: `len=${provided.length}` })
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
+  // Chỉ log login thành công khi GET (lần đầu đăng nhập)
   if (req.method === 'GET') {
+    await logActivity('admin_login', { result: 'ok', ip })
     try {
       const settings = await getAllSettings()
-      // Ẩn password
       if (settings.odoo_api_key) settings.odoo_api_key = '••••••••'
       return res.status(200).json(settings)
     } catch (err) {
       console.error('[Admin] getAllSettings error:', err.message)
-      // Trả về object rỗng thay vì lỗi — admin vẫn vào được dù settings table chưa có
       return res.status(200).json({})
     }
   }
@@ -41,6 +47,7 @@ export default async function handler(req, res) {
     if (!key) return res.status(400).json({ error: 'Missing key' })
     try {
       await setSetting(key, value)
+      await logActivity('admin_setting_change', { key, ip })
       return res.status(200).json({ success: true, key, value })
     } catch (err) {
       return res.status(500).json({ error: err.message })
