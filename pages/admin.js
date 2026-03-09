@@ -169,7 +169,7 @@ export default function AdminPage() {
   const [toast, setToast]       = useState(null)
   const [activeTab, setActiveTab] = useState('config')
 
-  // Odoo test
+  // NCC O test
   const [testCode, setTestCode]     = useState('')
   const [testResult, setTestResult] = useState(null)
   const [testLoading, setTestLoading] = useState(false)
@@ -267,7 +267,7 @@ export default function AdminPage() {
   const autoloadOn = settings.autoload_enabled === 'true'
   const tabs = [
     { id:'config', label:'⚙️ Cấu hình' },
-    { id:'odoo',   label:'🔗 Odoo' },
+    { id:'odoo',   label:'🔗 Ncc O' },
     { id:'sync',   label:'🔄 Sync Stock' },
     { id:'logs',   label:'📋 Autoload' },
   ]
@@ -341,7 +341,7 @@ export default function AdminPage() {
             {/* Autoload toggle */}
             <div style={{background:'white',borderRadius:14,padding:24,boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
               <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:4}}>🤖 Autoload từ Nhà cung cấp</div>
-              <p style={{fontSize:13,color:'#6b7280',marginBottom:20,lineHeight:1.6}}>Khi kho nội bộ hết, tự động lấy key từ Odoo nhà cung cấp</p>
+              <p style={{fontSize:13,color:'#6b7280',marginBottom:20,lineHeight:1.6}}>Khi kho nội bộ hết, tự động lấy key từ NCCO</p>
               <div style={{display:'flex',alignItems:'center',gap:16,padding:'16px 20px',background: autoloadOn?'#f0fdf4':'#f9fafb',borderRadius:10,border:`1px solid ${autoloadOn?'#bbf7d0':'#e5e7eb'}`}}>
                 <Toggle value={autoloadOn} onChange={v => saveSetting('autoload_enabled', v)} disabled={saving.autoload_enabled} />
                 <div>
@@ -349,7 +349,7 @@ export default function AdminPage() {
                     {autoloadOn ? '✅ Đang bật' : '⭕ Đang tắt'}
                   </div>
                   <div style={{fontSize:12,color:'#6b7280',marginTop:2}}>
-                    {autoloadOn ? 'Hệ thống sẽ tự động lấy key từ Odoo khi hết hàng' : 'Khi hết hàng sẽ gửi email thông báo cho khách'}
+                    {autoloadOn ? 'Hệ thống sẽ tự động lấy key từ NccO khi hết hàng' : 'Khi hết hàng sẽ gửi email thông báo cho khách'}
                   </div>
                 </div>
               </div>
@@ -374,10 +374,10 @@ export default function AdminPage() {
         {activeTab === 'odoo' && (
           <div style={{display:'grid',gap:20}}>
             <div style={{background:'white',borderRadius:14,padding:24,boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
-              <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:16}}>🔗 Cấu hình Odoo nhà cung cấp</div>
+              <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:16}}>🔗 Cấu hình nhà cung cấp O</div>
               {['odoo_url','odoo_db','odoo_user','odoo_api_key'].map(key => {
                 const conf = {
-                  odoo_url:     { label:'Odoo URL',      type:'text',     placeholder:'https://supplier.odoo.com' },
+                  odoo_url:     { label:'NCCO URL',      type:'text',     placeholder:'https://supplier.ncco.com' },
                   odoo_db:      { label:'Database name', type:'text',     placeholder:'supplier_db' },
                   odoo_user:    { label:'Email / User',  type:'text',     placeholder:'admin@supplier.com' },
                   odoo_api_key: { label:'API Key',       type:'password', placeholder:'••••••••' },
@@ -411,7 +411,7 @@ export default function AdminPage() {
 
             {/* Test Odoo */}
             <div style={{background:'white',borderRadius:14,padding:24,boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
-              <div style={{fontFamily:'Syne',fontWeight:700,fontSize:15,marginBottom:12}}>🧪 Test kết nối Odoo</div>
+              <div style={{fontFamily:'Syne',fontWeight:700,fontSize:15,marginBottom:12}}>🧪 Test kết nối Ncc O</div>
               <div style={{display:'flex',gap:8,marginBottom:16}}>
                 <input
                   value={testCode}
@@ -451,7 +451,7 @@ export default function AdminPage() {
                 <div>
                   <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16,marginBottom:4}}>🔄 Sync Tồn Kho NCC</div>
                   <p style={{fontSize:13,color:'#6b7280',lineHeight:1.7,maxWidth:520}}>
-                    Cập nhật <code style={{background:'#f3f4f6',padding:'1px 5px',borderRadius:4}}>stock_supplier</code> từ Odoo.
+                    Cập nhật <code style={{background:'#f3f4f6',padding:'1px 5px',borderRadius:4}}>stock_supplier</code> từ Ncc O.
                     <code style={{background:'#f3f4f6',padding:'1px 5px',borderRadius:4,marginLeft:6}}>forecasted = stock + stock_supplier</code>
                   </p>
                 </div>
@@ -523,7 +523,7 @@ export default function AdminPage() {
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
               <div>
                 <div style={{fontFamily:'Syne',fontWeight:700,fontSize:16}}>📋 Autoload Logs</div>
-                <p style={{fontSize:13,color:'#6b7280',marginTop:2}}>Lịch sử tự động nhập hàng từ Odoo</p>
+                <p style={{fontSize:13,color:'#6b7280',marginTop:2}}>Lịch sử tự động nhập hàng từ Ncc O</p>
               </div>
               <button onClick={loadLogs} style={{padding:'8px 16px',background:'#f3f4f6',border:'none',borderRadius:8,cursor:'pointer',fontWeight:600,fontSize:13}}>🔄 Tải lại</button>
             </div>
@@ -536,7 +536,7 @@ export default function AdminPage() {
                 <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
                   <thead>
                     <tr style={{borderBottom:'2px solid #e5e7eb'}}>
-                      {['Thời gian','Đơn hàng','Sản phẩm','Key nạp','Picking Odoo','Trạng thái','Lỗi'].map(h => (
+                      {['Thời gian','Đơn hàng','Sản phẩm','Key nạp','Picking NccO','Trạng thái','Lỗi'].map(h => (
                         <th key={h} style={{padding:'10px 12px',textAlign:'left',fontWeight:600,color:'#374151',whiteSpace:'nowrap'}}>{h}</th>
                       ))}
                     </tr>
