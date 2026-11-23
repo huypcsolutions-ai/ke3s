@@ -1,6 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Syne:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
 
 :root {
+  --font: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --blue: #0078d4;
   --blue-dark: #005a9e;
   --blue-light: #e3f2fd;
@@ -12,8 +13,8 @@
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
   --gray-300: #d1d5db;
-  --gray-500: #6b7280;
-  --gray-700: #374151;
+  --gray-500: #5b6472;
+  --gray-700: #2b3544;
   --gray-900: #111827;
   --white: #ffffff;
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
@@ -36,11 +37,11 @@ html {
 }
 
 body {
-  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font);
   background: var(--gray-50);
   color: var(--gray-900);
-  line-height: 1.6;
-  font-size: 15px;
+  line-height: 1.7;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -96,10 +97,10 @@ body {
 .logo-icon span:nth-child(4) { background: #ffb900; }
 
 .logo-text {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-weight: 700;
   font-size: 18px;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.2px;
 }
 
 .logo-text span { color: var(--blue); }
@@ -115,7 +116,7 @@ body {
   border-radius: var(--radius-sm);
   text-decoration: none;
   color: var(--gray-700);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   transition: all 0.15s;
 }
@@ -180,19 +181,19 @@ body {
   border: 1px solid rgba(255,255,255,0.25);
   padding: 6px 16px;
   border-radius: 100px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   margin-bottom: 20px;
   backdrop-filter: blur(4px);
 }
 
 .hero h1 {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: clamp(28px, 5vw, 48px);
   font-weight: 800;
   line-height: 1.15;
   margin-bottom: 16px;
-  letter-spacing: -1px;
+  letter-spacing: -0.2px;
 }
 
 .hero p {
@@ -211,12 +212,12 @@ body {
 
 .stat { text-align: center; }
 .stat-num {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: 26px;
   font-weight: 700;
   color: var(--yellow);
 }
-.stat-label { font-size: 12px; color: rgba(255,255,255,0.7); }
+.stat-label { font-size: 13.5px; color: rgba(255,255,255,0.7); }
 
 /* ============ TRUST BAR ============ */
 .trust-bar {
@@ -237,7 +238,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--gray-700);
 }
@@ -250,7 +251,7 @@ body {
 }
 
 .section-title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: 26px;
   font-weight: 700;
   color: var(--gray-900);
@@ -259,7 +260,7 @@ body {
 
 .section-sub {
   color: var(--gray-500);
-  font-size: 14px;
+  font-size: 15px;
   margin-bottom: 32px;
 }
 
@@ -294,7 +295,7 @@ body {
   left: 12px;
   background: var(--teal);
   color: white;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 100px;
@@ -334,7 +335,7 @@ body {
 }
 
 .product-name {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: 16px;
   font-weight: 700;
   color: var(--gray-900);
@@ -343,7 +344,7 @@ body {
 }
 
 .product-desc {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--gray-500);
   line-height: 1.6;
   margin-bottom: 16px;
@@ -354,7 +355,7 @@ body {
 }
 
 .product-price {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: 22px;
   font-weight: 700;
   color: var(--blue);
@@ -362,7 +363,7 @@ body {
 }
 
 .product-price span {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   color: var(--gray-500);
 }
@@ -372,13 +373,13 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--gray-500);
 }
 
 .stars {
   color: var(--orange);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .btn {
@@ -388,7 +389,7 @@ body {
   gap: 6px;
   padding: 10px 20px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -432,13 +433,13 @@ body {
 
 .btn-lg {
   padding: 14px 28px;
-  font-size: 15px;
+  font-size: 16px;
   border-radius: 10px;
 }
 
 .btn-sm {
   padding: 7px 14px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* ============ CHATBOT ============ */
@@ -513,8 +514,8 @@ body {
   font-size: 20px;
 }
 
-.chat-header-info h4 { font-size: 14px; font-weight: 600; margin: 0; }
-.chat-header-info p { font-size: 11px; opacity: 0.8; margin: 2px 0 0; }
+.chat-header-info h4 { font-size: 15px; font-weight: 600; margin: 0; }
+.chat-header-info p { font-size: 12.5px; opacity: 0.8; margin: 2px 0 0; }
 
 .chat-online { 
   width: 8px; height: 8px; 
@@ -555,7 +556,7 @@ body {
 .msg-bubble {
   padding: 10px 14px;
   border-radius: 16px;
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -604,7 +605,7 @@ body {
   color: var(--blue);
   border: 1px solid var(--blue);
   border-radius: 100px;
-  font-size: 12px;
+  font-size: 13.5px;
   cursor: pointer;
   transition: all 0.15s;
   font-family: 'Be Vietnam Pro', sans-serif;
@@ -624,7 +625,7 @@ body {
   padding: 10px 14px;
   border: 1px solid var(--gray-200);
   border-radius: 100px;
-  font-size: 14px;
+  font-size: 15px;
   outline: none;
   font-family: 'Be Vietnam Pro', sans-serif;
   background: var(--gray-50);
@@ -659,7 +660,7 @@ body {
 
 .form-label {
   display: block;
-  font-size: 13.5px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--gray-700);
   margin-bottom: 6px;
@@ -669,7 +670,7 @@ body {
 
 .form-note {
   display: block;
-  font-size: 11.5px;
+  font-size: 13px;
   font-style: italic;
   color: #ef4444;
   margin-bottom: 6px;
@@ -681,7 +682,7 @@ body {
   padding: 11px 14px;
   border: 1.5px solid var(--gray-200);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 15px;
   background: white;
   color: var(--gray-900);
   transition: border-color 0.15s;
@@ -724,7 +725,7 @@ body {
   max-width: 360px;
   padding: 14px 18px;
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   box-shadow: var(--shadow-md);
   animation: toastIn 0.3s ease;
@@ -785,7 +786,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: 22px;
   font-weight: 800;
   margin: 0 auto 14px;
@@ -793,13 +794,13 @@ body {
 }
 
 .step-title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 8px;
 }
 
-.step-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+.step-desc { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
 
 .guide-articles {
   display: grid;
@@ -837,8 +838,8 @@ body {
   flex-shrink: 0;
 }
 
-.guide-card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-.guide-card-desc { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+.guide-card-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.guide-card-desc { font-size: 14px; color: var(--gray-500); line-height: 1.5; }
 
 /* ============ PAYMENT ============ */
 .payment-container {
@@ -880,7 +881,7 @@ body {
 .qr-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
 
 .countdown {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
   font-size: 32px;
   font-weight: 700;
   color: var(--blue);
@@ -959,7 +960,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 6px 0;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .price-row.total {
@@ -969,7 +970,7 @@ body {
   font-size: 18px;
   font-weight: 700;
   color: var(--blue);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font);
 }
 
 .price-row.discount { color: var(--teal); }
@@ -991,21 +992,21 @@ body {
 
 .footer h4 {
   color: white;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   margin-bottom: 16px;
 }
 
 .footer ul { list-style: none; }
 .footer ul li { margin-bottom: 8px; }
-.footer ul a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; transition: color 0.15s; }
+.footer ul a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 15px; transition: color 0.15s; }
 .footer ul a:hover { color: white; }
 
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.1);
   padding-top: 24px;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   color: rgba(255,255,255,0.4);
 }
 
@@ -1085,3 +1086,14 @@ body {
   from { transform: scale(0); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+
+/* ============ TYPOGRAPHY OVERRIDES ============ */
+h1, h2, h3, h4, .section-title, .logo-text { font-family: var(--font); font-weight: 700; line-height: 1.3; }
+h1 { line-height: 1.2; }
+button, input, select, textarea { font-family: var(--font); }
+input, select, textarea { font-size: 16px; } /* tránh iOS tự zoom khi focus */
+p { line-height: 1.7; }
+code { font-size: 0.9em; }
+/* Các chỗ viết font Syne trực tiếp trong inline style của JS */
+[style*="Syne"] { font-family: var(--font) !important; }
