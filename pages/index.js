@@ -31,8 +31,27 @@ async function logActivity(action, meta = {}) {
 
 // ─── Product Card ─────────────────────────────────────────────────────────
 
+function getLicenseDetails(productName = '') {
+  const name = productName.toLowerCase()
+
+  if (name.includes('family')) {
+    return ['6 người dùng', '1 năm · 1TB OneDrive/người', 'Windows, macOS, iOS, Android']
+  }
+  if (name.includes('personal')) {
+    return ['1 người dùng · tối đa 5 thiết bị', '1 năm · 1TB OneDrive', 'Windows, macOS, iOS, Android']
+  }
+  if (name.includes('business')) {
+    return ['Theo số lượng người dùng của gói', 'Theo thời hạn gói · OneDrive for Business', 'Windows, macOS, iOS, Android']
+  }
+  if (name.includes('2021') || name.includes('pro plus')) {
+    return ['1 thiết bị', 'Vĩnh viễn · không kèm OneDrive', 'Windows']
+  }
+  return ['Thông tin theo mô tả sản phẩm', 'Vui lòng xem mô tả hoặc hỏi tư vấn', 'Kiểm tra tương thích trước khi mua']
+}
+
 function ProductCard({ product }) {
   const router = useRouter()
+  const licenseDetails = getLicenseDetails(product.name)
 
   // Dùng forecasted = stock + stock_supplier để hiện còn/hết hàng
   const forecasted = product.forecasted ?? (product.stock + (product.stock_supplier || 0))
@@ -70,6 +89,11 @@ function ProductCard({ product }) {
       <div className="product-body">
         <div className="product-name">{product.name}</div>
         <div className="product-desc">{product.description}</div>
+        <ul className="product-license-details" aria-label="Thông tin gói bản quyền">
+          <li><strong>Người dùng / thiết bị:</strong> {licenseDetails[0]}</li>
+          <li><strong>Thời hạn / dung lượng:</strong> {licenseDetails[1]}</li>
+          <li><strong>Nền tảng:</strong> {licenseDetails[2]}</li>
+        </ul>
 
         <div className="product-price">
           {new Intl.NumberFormat('vi-VN').format(product.price)}đ
@@ -180,10 +204,10 @@ export default function Home() {
                 <div className="stat-num">5,000+</div>
                 <div className="stat-label">Khách hàng</div>
               </div>
-              <div className="stat">
+              <a className="stat stat-link" href="/phan-hoi" title="Liên hệ để hỏi về đánh giá">
                 <div className="stat-num">4.7★</div>
-                <div className="stat-label">Đánh giá</div>
-              </div>
+                <div className="stat-label">Đánh giá · hỏi thêm</div>
+              </a>
               <div className="stat">
                 <div className="stat-num">&lt;5 phút</div>
                 <div className="stat-label">Giao hàng</div>
@@ -197,6 +221,18 @@ export default function Home() {
         </div>
       </section>
 
+      {/* PURCHASE STEPS */}
+      <section className="purchase-steps" aria-labelledby="purchase-steps-title">
+        <div className="container">
+          <h2 id="purchase-steps-title">Mua hàng nhanh gọn trong 3 bước</h2>
+          <ol className="purchase-steps-list">
+            <li><span className="purchase-step-number">1</span><div><strong>Chọn gói & nhập email</strong><span>Chọn sản phẩm phù hợp và điền email nhận key.</span></div></li>
+            <li><span className="purchase-step-number">2</span><div><strong>Quét mã QR thanh toán</strong><span>Thanh toán an toàn qua ngân hàng bằng VietQR.</span></div></li>
+            <li><span className="purchase-step-number">3</span><div><strong>Nhận key tự động sau 1–5 phút</strong><span>Key được gửi về email sau khi xác nhận thanh toán.</span></div></li>
+          </ol>
+        </div>
+      </section>
+
       {/* TRUST BAR */}
       <div className="trust-bar">
         <div className="container">
@@ -204,8 +240,8 @@ export default function Home() {
             <div className="trust-item"><span className="icon">✅</span>Key chính hãng 100%</div>
             <div className="trust-item"><span className="icon">⚡</span>Nhận key trong 5 phút</div>
             <div className="trust-item"><span className="icon">🛡️</span>Bảo hành đổi key miễn phí</div>
-            <div className="trust-item"><span className="icon">💳</span>Thanh toán QR an toàn</div>
-            <div className="trust-item"><span className="icon">🎧</span>Hỗ trợ kích hoạt 24/7</div>
+            <div className="trust-item"><span className="trust-icon vietqr-mark" aria-hidden="true">VietQR</span>Thanh toán QR an toàn</div>
+            <div className="trust-item"><span className="icon" aria-hidden="true">🎧</span>Hỗ trợ kích hoạt 24/7</div>
           </div>
         </div>
       </div>
@@ -237,6 +273,26 @@ export default function Home() {
               </p>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* LICENSE COMPARISON */}
+      <section className="license-comparison" aria-labelledby="license-comparison-title">
+        <div className="container">
+          <h2 id="license-comparison-title" className="section-title">So sánh nhanh các gói</h2>
+          <p className="section-sub">Chọn theo số người dùng, thời hạn và thiết bị bạn cần.</p>
+          <div className="comparison-scroll" role="region" aria-label="Bảng so sánh gói bản quyền" tabIndex="0">
+            <table>
+              <thead><tr><th scope="col">Gói bản quyền</th><th scope="col">Người dùng / thiết bị</th><th scope="col">Thời hạn / dung lượng</th><th scope="col">Nền tảng</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Microsoft 365 Personal</th><td>1 người · tối đa 5 thiết bị</td><td>1 năm · 1TB OneDrive</td><td>Windows, macOS, iOS, Android</td></tr>
+                <tr><th scope="row">Microsoft 365 Family</th><td>Tối đa 6 người</td><td>1 năm · 1TB/người</td><td>Windows, macOS, iOS, Android</td></tr>
+                <tr><th scope="row">Microsoft 365 Business</th><td>Theo số lượng người dùng</td><td>Theo gói · OneDrive for Business</td><td>Windows, macOS, iOS, Android</td></tr>
+                <tr><th scope="row">Office 2021 Pro Plus</th><td>1 thiết bị</td><td>Vĩnh viễn · không kèm OneDrive</td><td>Windows</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="comparison-note">Quyền lợi có thể khác nhau theo phiên bản key. Vui lòng kiểm tra mô tả sản phẩm cụ thể trước khi thanh toán.</p>
         </div>
       </section>
 

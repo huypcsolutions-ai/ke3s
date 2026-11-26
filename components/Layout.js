@@ -56,10 +56,11 @@ function Chatbot() {
 
   return (
     <>
-      <button className="chatbot-toggle" onClick={() => setOpen(o => !o)} title="Chat hỗ trợ">
-        {open ? '✕' : '💬'}
+      <button className={`chatbot-toggle${open ? ' is-open' : ''}`} onClick={() => setOpen(o => !o)} title="Cần tư vấn chọn gói?" aria-label={open ? 'Đóng chat hỗ trợ' : 'Cần tư vấn chọn gói?'} aria-expanded={open} aria-controls="support-chat-window">
+        <span className="chatbot-toggle-label">Cần tư vấn chọn gói?</span>
+        <span aria-hidden="true" className={open ? undefined : 'chatbot-icon'}>{open ? '×' : ''}</span>
       </button>
-      <div className={`chatbot-window${open ? ' open' : ''}`}>
+      <div id="support-chat-window" className={`chatbot-window${open ? ' open' : ''}`} aria-hidden={!open}> 
         <div className="chat-header">
           <div className="chat-avatar">🤖</div>
           <div className="chat-header-info">
@@ -186,7 +187,7 @@ export default function Layout({ children, title = 'Microsoft 365 Keys - Bản q
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© 2024 M365Keys. Tất cả quyền được bảo lưu. | Microsoft là thương hiệu của Microsoft Corporation.</p>
+            <p>© 2026 M365Keys. Tất cả quyền được bảo lưu. | Microsoft là thương hiệu của Microsoft Corporation.</p>
           </div>
         </div>
       </footer>
